@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Player1
   m_EditorClassIdentifier: 
   PlayerStatsData: 000000000000000000000000
-  PlayerTurn: 0
-  PlayerBattle: 0
+  PlayerTurn: 1
+  PlayerBattle: 1
   playerCamp: 1
   PlayerImage: {fileID: 0}
