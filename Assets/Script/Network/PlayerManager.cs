@@ -1,8 +1,7 @@
-using System.Collections;
+using Mirror;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Mirror;
 
 /*
  * =====    Mirror 사용   =====
@@ -13,22 +12,33 @@ using Mirror;
 
 public class PlayerManager : NetworkBehaviour
 {
-    public GameObject card;
-    // 카드 데이터
-
+    #region Variables
+    public GameObject cardHand;
+    // 손패 앞면 데이터
+    public GameObject cardPlay;
+    // 필드 카드 데이터
     public GameObject playerArea;
     // 플레이어 카드 사용 공간
+    private GameObject playerDropZone;
+    // 플레이어 카드 소환 공간
     public GameObject playerCardHand;
     // 플레이어 손패 
 
     public GameObject enemyArea;
     // 상대 카드 사용 공간
+    private GameObject enemyDropZone;
+    // 상대 카드 소환 공간
     public GameObject enemyCardHand;
     // 상대 손패
 
+    public Sprite Card_BgImg;
+    // 카드 뒷면 이미지
 
     [SerializeField]
     private List<CardData> cardList = new List<CardData>();
+
+    private List<int> deckList = new List<int>();
+    #endregion
 
     [Server]
     public override void OnStartServer()    // 서버
@@ -51,57 +61,99 @@ public class PlayerManager : NetworkBehaviour
 
         enemyArea = GameObject.Find("EnemyArea");
         enemyCardHand = GameObject.Find("EnemyHand");
+
+        deckList.Add(0);
+        deckList.Add(1);
+        deckList.Add(0);
+        deckList.Add(1);
+        deckList.Add(0);
+        deckList.Add(1);
     }
+
 
     [Command]
     public void cmdDrawCard() //플레이어의 턴마다 패에 카드를 추가
     {
         if (playerCardHand.transform.childCount < 8)
         {
-            /*
-            CardPrefab.GetComponent<Card>()._CardDataList.Clear(); //프리팹의 카드 정보를 초기화
-            int CardRandomCount = Random.Range(0, CardDeck._CardDataList.Count); //덱에서 랜덤하게 한개의 카드를 선택
-            CardPrefab.GetComponent<Card>()._CardDataList.Add(CardDeck._CardDataList[CardRandomCount]); //프리팹에 카드 정보 추가
-            CardPrefab.GetComponent<Image>().sprite = CardDeck._CardDataList[CardRandomCount].CardImage; //프리팹에 카드 이미지 정보 추가
-            Instantiate(CardPrefab, CardHand.transform); //패 오브젝트를 부모로 지정하여 프리팹을 생성
-            CardDeck._CardDataList.RemoveAt(CardRandomCount);//덱에서 패로간 카드를 삭제
-            */
-            Debug.Log("카드 드로우 실행");
-            GameObject drawCard = Instantiate(card, Vector2.zero, Quaternion.identity);
+            GameObject drawCard = Instantiate(cardHand, Vector2.zero, Quaternion.identity);
             drawCard.GetComponent<Card>()._CardDataList.Clear();
-            int randomNum = Random.Range(0, 2);
-            Debug.Log(randomNum);
-            drawCard.GetComponent<Card>()._CardDataList.Add(cardList[randomNum]);
-            drawCard.GetComponent<Image>().sprite = cardList[randomNum].CardImage;
-
 
             NetworkServer.Spawn(drawCard, connectionToClient);
-            Debug.Log("네트워크에 스폰");
-            RpcShowCard(drawCard, "Dealt");
-            Debug.Log("스폰된 오브젝트 처리");
+            RpcDrawCard(drawCard);
+        }
+    }
 
+    [Command]
+    public void cmdDropCard(GameObject card, string field)
+    {
+        Debug.Log("command");
+        RpcShowCard(card, field);
+    }
+
+
+    [ClientRpc]
+    private void RpcDrawCard(GameObject card)
+    {
+        int randomNum = Random.Range(0, deckList.Count);
+        Debug.Log(randomNum);
+        Debug.Log(deckList[randomNum]);
+
+        card.GetComponent<Card>()._CardDataList.Add(cardList[deckList[randomNum]]);
+
+        if (hasAuthority)
+        // 플레이어
+        {
+            card.transform.GetChild(0).GetComponent<Image>().sprite = cardList[deckList[randomNum]].CardImage;
+            card.transform.SetParent(playerCardHand.transform, false);
+        }
+        else
+        // 상대
+        {
+            int count = card.transform.childCount;
+            for (int i = 0; i < count; i++)
+            {
+                if (i == 1)
+                {
+                    card.transform.GetChild(i).GetComponent<Image>().sprite = Card_BgImg;
+                    continue;
+                }
+
+                card.transform.GetChild(i).gameObject.SetActive(false);
+            }
+            card.transform.SetParent(enemyCardHand.transform, false);
         }
     }
 
     [ClientRpc]
-    private void RpcShowCard(GameObject card, string type)
+    private void RpcShowCard(GameObject card, string field)
     {
-        if (type == "Dealt")
+        Debug.Log("RPC");
+        for (int i = 0; i < 3; i++)
         {
-            if (hasAuthority)
-            // 플레이어
+            if (playerArea.transform.GetChild(i).ToString().Substring(0, 9).Equals(field)
+                && enemyArea.transform.GetChild(i).ToString().Substring(0, 9).Equals(field))
             {
-                card.transform.SetParent(playerCardHand.transform, false);
-            }
-            else
-            // 상대
-            {
-                card.transform.SetParent(enemyCardHand.transform, false);
+                playerDropZone = playerArea.transform.GetChild(i).gameObject;
+                enemyDropZone = enemyArea.transform.GetChild(i).gameObject;
+                break;
             }
         }
-        else if (type == "Played")
+        if (hasAuthority)
+        // 플레이어
         {
-            //
+            playerDropZone.GetComponent<Image>().color = new Color(255f, 255f, 255f, 255f);
+            playerDropZone.GetComponent<Card>()._CardDataList.Add(card.GetComponent<Card>()._CardDataList[0]);
+            playerDropZone.GetComponent<Image>().sprite = card.GetComponent<Card>()._CardDataList[0].CardImage;
+            //Debug.Log("선택 카드 시리얼 넘버 " + card.GetComponent<Card>()._CardDataList[0].SerialNum);
+            //Debug.Log("드랍존 카드 시리얼 넘버 " + playerDropZone.GetComponent<Card>()._CardDataList[0].SerialNum);
+        }
+        else
+        // 상대
+        {
+            enemyDropZone.GetComponent<Image>().color = new Color(255f, 255f, 255f, 255f);
+            enemyDropZone.GetComponent<Card>()._CardDataList.Add(card.GetComponent<Card>()._CardDataList[0]);
+            enemyDropZone.GetComponent<Image>().sprite = card.GetComponent<Card>()._CardDataList[0].CardImage;
         }
     }
 }

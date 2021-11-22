@@ -550,8 +550,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1542781523}
   m_HandleRect: {fileID: 1542781522}
   m_Direction: 0
-  m_Value: -0.000000073188474
-  m_Size: 0.37198818
+  m_Value: 0.000000073188474
+  m_Size: 0.37480816
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1074,7 +1074,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -500.00003, y: 62.54}
+  m_AnchoredPosition: {x: -500, y: 62.54}
   m_SizeDelta: {x: 2669.6, y: 150}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &854145075
@@ -1494,9 +1494,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da95ca8b75a09ec4b84f840c38c018f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CardDeck: {fileID: 1036416226}
-  CardHand: {fileID: 1892518450}
-  CardPrefab: {fileID: 8598410476846348390, guid: fc2095a64fe02744e89da9a5326b8ee5, type: 3}
+  CardDeck: {fileID: 0}
+  CardHand: {fileID: 0}
+  CardPrefab: {fileID: 0}
 --- !u!4 &1036416229
 Transform:
   m_ObjectHideFlags: 0
@@ -3239,7 +3239,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2065312874}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.37174982
+  m_Size: 0.37456805
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3390,7 +3390,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -499.99994, y: 65.43}
+  m_AnchoredPosition: {x: -500.00006, y: 65.43}
   m_SizeDelta: {x: 2667.89, y: 150}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1892518452
