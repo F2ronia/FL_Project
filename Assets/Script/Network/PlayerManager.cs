@@ -34,11 +34,27 @@ public class PlayerManager : NetworkBehaviour
     public Sprite Card_BgImg;
     // 카드 뒷면 이미지
 
+    private int draw_cnt;
+
+    public int max_draw_cnt;
+
     [SerializeField]
     private List<CardData> cardList = new List<CardData>();
 
     private List<int> deckList = new List<int>();
+
+    private List<int> deckList_1 = new List<int>();
+    private List<int> deckList_2 = new List<int>();
+
     #endregion
+
+
+    private void Start()
+    {
+        draw_cnt = 0;
+        max_draw_cnt = 0;
+    }
+    
 
     [Server]
     public override void OnStartServer()    // 서버
@@ -46,14 +62,28 @@ public class PlayerManager : NetworkBehaviour
         base.OnStartServer();
 
         Debug.Log("카드 로딩");
-        Debug.Log(cardList);
+
+        deckList_1.Add(0);
+        deckList_1.Add(1);
+        deckList_1.Add(0);
+        deckList_1.Add(1);
+        deckList_1.Add(0);
+        deckList_1.Add(1);
+
+        deckList_2.Add(0);
+        deckList_2.Add(0);
+        deckList_2.Add(0);
+        deckList_2.Add(0);
+        deckList_2.Add(1);
+        deckList_2.Add(1);
+        deckList_2.Add(1);
+        deckList_2.Add(1);
     }
 
     [Client]
     public override void OnStartClient()    // 클라이언트
     {
         base.OnStartClient();
-
 
         // 오브젝트 할당
         playerArea = GameObject.Find("PlayerArea");
@@ -62,17 +92,21 @@ public class PlayerManager : NetworkBehaviour
         enemyArea = GameObject.Find("EnemyArea");
         enemyCardHand = GameObject.Find("EnemyHand");
 
-        deckList.Add(0);
-        deckList.Add(1);
-        deckList.Add(0);
-        deckList.Add(1);
-        deckList.Add(0);
-        deckList.Add(1);
+        CardManager.Instance.LoadDeck();
+    }
+
+    [Command]
+    public void CmdLoadDeck()
+    {
+        Debug.Log("플레이어 번호 : ");
+        Debug.Log("카드 총 매수 : " + deckList.Count);
+        Debug.Log("플레이어매니저 변수 : " + max_draw_cnt);
+        Debug.Log("카드매니저 변수 : " + CardManager.Instance.max_deck_cnt);
     }
 
 
     [Command]
-    public void cmdDrawCard() //플레이어의 턴마다 패에 카드를 추가
+    public void CmdDrawCard() //플레이어의 턴마다 패에 카드를 추가
     {
         if (playerCardHand.transform.childCount < 8)
         {
@@ -85,7 +119,7 @@ public class PlayerManager : NetworkBehaviour
     }
 
     [Command]
-    public void cmdDropCard(GameObject card, string field)
+    public void CmdDropCard(GameObject card, string field)
     {
         Debug.Log("command");
         RpcShowCard(card, field);
@@ -95,33 +129,38 @@ public class PlayerManager : NetworkBehaviour
     [ClientRpc]
     private void RpcDrawCard(GameObject card)
     {
-        int randomNum = Random.Range(0, deckList.Count);
-        Debug.Log(randomNum);
-        Debug.Log(deckList[randomNum]);
-
-        card.GetComponent<Card>()._CardDataList.Add(cardList[deckList[randomNum]]);
-
-        if (hasAuthority)
-        // 플레이어
+        if (draw_cnt > max_draw_cnt)
         {
-            card.transform.GetChild(0).GetComponent<Image>().sprite = cardList[deckList[randomNum]].CardImage;
-            card.transform.SetParent(playerCardHand.transform, false);
+            Debug.Log("XXXXX");
         }
         else
-        // 상대
         {
-            int count = card.transform.childCount;
-            for (int i = 0; i < count; i++)
+            card.GetComponent<Card>()._CardDataList.Add(cardList[deckList[draw_cnt]]);
+            Debug.Log("현재 뽑은 카드 수 " + draw_cnt);
+            Debug.Log("최대 뽑기 수 " + max_draw_cnt);
+            if (hasAuthority)
+            // 플레이어
             {
-                if (i == 1)
-                {
-                    card.transform.GetChild(i).GetComponent<Image>().sprite = Card_BgImg;
-                    continue;
-                }
-
-                card.transform.GetChild(i).gameObject.SetActive(false);
+                card.transform.GetChild(0).GetComponent<Image>().sprite = cardList[deckList[draw_cnt]].CardImage;
+                card.transform.SetParent(playerCardHand.transform, false);
             }
-            card.transform.SetParent(enemyCardHand.transform, false);
+            else
+            // 상대
+            {
+                int count = card.transform.childCount;
+                for (int i = 0; i < count; i++)
+                {
+                    if (i == 1)
+                    {
+                        card.transform.GetChild(i).GetComponent<Image>().sprite = Card_BgImg;
+                        continue;
+                    }
+
+                    card.transform.GetChild(i).gameObject.SetActive(false);
+                }
+                card.transform.SetParent(enemyCardHand.transform, false);
+            }
+            draw_cnt++;
         }
     }
 

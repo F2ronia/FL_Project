@@ -183,7 +183,7 @@ public class CardTarget_Net : NetworkBehaviour
         Debug.Log(Card_2);
         NetworkIdentity networkIdentity = NetworkClient.connection.identity;    // 현재 실행중인 클라이언트의 ID 값 받아오기
         playerManager = networkIdentity.GetComponent<PlayerManager>();          // ID 값에 해당하는 PlayerManager 할당
-        playerManager.cmdDropCard(Card_1, Card_2.ToString().Substring(0,9));
+        playerManager.CmdDropCard(Card_1, Card_2.ToString().Substring(0,9));
         GetComponent<Image>().enabled = false;
         yield return new WaitForSeconds(delayTime);
         Destroy(Card_1, 0f);

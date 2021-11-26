@@ -1,0 +1,7 @@
+https://mirror-networking.gitbook.io/docs/guides/synchronization/syncvars
+
+Making multiplayer games this way is fun & easy. Instead of MonoBehaviour, Mirror provides NetworkBehaviour components with:
+▣ [Server] / [Client] tags for server-only / client-only code
+▣ [Command] for Client->Server function calls
+▣ [ClientRpc] / [TargetRpc] for Server->Client function calls
+▣ [SyncVar] / SyncList to automatically sync variables from Server->Client.

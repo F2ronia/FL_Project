@@ -19,13 +19,16 @@ public class CardManager : NetworkBehaviour
     }
     #endregion
 
+    [SyncVar]
+    public int max_deck_cnt = 6;
+
     private PlayerManager playerManager;
 
     public void CardDraw()
     {
         NetworkIdentity networkIdentity = NetworkClient.connection.identity;    // 현재 실행중인 클라이언트의 ID 값 받아오기
         playerManager = networkIdentity.GetComponent<PlayerManager>();          // ID 값에 해당하는 PlayerManager 할당
-        playerManager.cmdDrawCard();
+        playerManager.CmdDrawCard();
     }
 
     /*
@@ -34,4 +37,12 @@ public class CardManager : NetworkBehaviour
 
     }
     */
+
+    public void LoadDeck()
+    {
+        NetworkIdentity networkIdentity = NetworkClient.connection.identity;    // 현재 실행중인 클라이언트의 ID 값 받아오기
+        playerManager = networkIdentity.GetComponent<PlayerManager>();          // ID 값에 해당하는 PlayerManager 할당
+        playerManager.max_draw_cnt = max_deck_cnt;
+        playerManager.CmdLoadDeck();
+    }
 }
