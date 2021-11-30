@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class PlayerDataInformation : ScriptableObject
 { 
-    public int[] PlayerStatsData = new int[2];
+    public int[] PlayerStatsData = new int[1];
         //0 체력
         //1 코스트
         //2 쉴드
