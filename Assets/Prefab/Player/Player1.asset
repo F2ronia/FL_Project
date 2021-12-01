@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6506e79a1f9d3084bafe8f5ae187738d, type: 3}
   m_Name: Player1
   m_EditorClassIdentifier: 
-  PlayerStatsData: 000000000000000000000000
+  PlayerStatsData: e8030000bc020000
   PlayerTurn: 1
   PlayerBattle: 0
   playerCamp: 1

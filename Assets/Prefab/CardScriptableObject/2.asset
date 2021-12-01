@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: 2
   m_EditorClassIdentifier: 
   CardName: 
-  CardStatsData: df0200003f000000000000000200000068000000
+  CardStatsDatas: 010000000100000000000000000000000000000000000000
   CardImage: {fileID: 21300000, guid: 0ff955e2a01f05346bbc10634f72282f, type: 3}
-  playerDataInformation: {fileID: 11400000, guid: 08e011e2972d4c54eb3d92d37ef4499c, type: 2}
   cardType: 0
-  SerialNum: 2
+  CardEffact: "\u3134\u3147\u3141\u3139"

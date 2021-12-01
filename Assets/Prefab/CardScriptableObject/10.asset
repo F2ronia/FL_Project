@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: 10
   m_EditorClassIdentifier: 
   CardName: 
-  CardStatsData: 520000008100000000000000000000001c000000
+  CardStatsDatas: 780000001400000000000000000000000000000000000000
   CardImage: {fileID: 21300000, guid: 83eec96542ae5ad47af389f43b0793c0, type: 3}
   playerDataInformation: {fileID: 11400000, guid: 08e011e2972d4c54eb3d92d37ef4499c, type: 2}
+  cardType: 0
+  CardEffact: "\u3153\u3134"

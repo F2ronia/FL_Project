@@ -17,7 +17,7 @@ public class RandomSelect : MonoBehaviour
         for(int i = 0;i < CardList.Count; i++)
         {
             CardList[i].CardImage = CardList[i].cardDataInformation.CardImage;
-            CardList[i].CardStatsData = CardList[i].cardDataInformation.CardStatsData;
+            CardList[i].CardStatsData = CardList[i].cardDataInformation.CardStatsDatas;
             CardList[i].CardName = CardList[i].cardDataInformation.CardName;
         }
  
