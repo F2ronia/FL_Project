@@ -19,13 +19,19 @@ public class CardShuffle : MonoBehaviour
 
     public void CardDraw() //플레이어의 턴마다 패에 카드를 추가
     {
-        if(CardHand.transform.childCount < 8)
+        if(CardHand.transform.childCount < 8) //플레이어 패에 카드가 8장 이하일때만
         {
+
+            GameObject Card;
         CardPrefab.GetComponent<Card>()._CardDataList.Clear(); //프리팹의 카드 정보를 초기화
         int CardRandomCount = Random.Range(0, CardDeck._CardDataList.Count); //덱에서 랜덤하게 한개의 카드를 선택
         CardPrefab.GetComponent<Card>()._CardDataList.Add(CardDeck._CardDataList[CardRandomCount]); //프리팹에 카드 정보 추가
-        CardPrefab.GetComponent<Image>().sprite = CardDeck._CardDataList[CardRandomCount].CardImage; //프리팹에 카드 이미지 정보 추가
-        Instantiate(CardPrefab, CardHand.transform); //패 오브젝트를 부모로 지정하여 프리팹을 생성
+
+        CardPrefab.GetComponent<Card>()._CardDataList[0].CardStatsData = CardDeck._CardDataList[CardRandomCount].cardDataInformation.CardStatsDatas;
+
+       
+
+        Card = Instantiate(CardPrefab, CardHand.transform); //패 오브젝트를 부모로 지정하여 프리팹을 생성
         CardDeck._CardDataList.RemoveAt(CardRandomCount);//덱에서 패로간 카드를 삭제
         }
     }
