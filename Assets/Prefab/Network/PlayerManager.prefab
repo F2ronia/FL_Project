@@ -93,27 +93,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  cardHand: {fileID: 6455092873339279342, guid: 3da9054a2199d1c43a458f8f0a4c9c4e, type: 3}
+  cardHand: {fileID: 2362509040567297607, guid: 8e31033e015a82d4aa70ff1c187139f0, type: 3}
   cardPlay: {fileID: 7298973754185628728, guid: 90054cb095ce90c4dbb496da00708fac, type: 3}
   playerArea: {fileID: 0}
   playerCardHand: {fileID: 0}
   enemyArea: {fileID: 0}
   enemyCardHand: {fileID: 0}
   Card_BgImg: {fileID: 21300000, guid: f28940405096ec944a7483f8e688f0ca, type: 3}
+  max_draw_cnt: 0
   cardList:
   - CardName: 
     CardStatsData: 
     CardImage: {fileID: 21300000, guid: 0ff955e2a01f05346bbc10634f72282f, type: 3}
     Hp: 0
     cardDataInformation: {fileID: 11400000, guid: 4601e43301eaa5a45b2b506222e1c618, type: 2}
-    playerDataInformation: {fileID: 11400000, guid: 08e011e2972d4c54eb3d92d37ef4499c, type: 2}
     cardType: 0
-    SerialNum: 0
   - CardName: 
     CardStatsData: 
     CardImage: {fileID: 21300000, guid: 08312133abc012445930fb94e0587b4e, type: 3}
     Hp: 0
     cardDataInformation: {fileID: 11400000, guid: 363a1b0adc049c544bc28452fc0754d9, type: 2}
-    playerDataInformation: {fileID: 11400000, guid: 08e011e2972d4c54eb3d92d37ef4499c, type: 2}
     cardType: 0
-    SerialNum: 1

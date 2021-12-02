@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Mirror;
 
+[RequireComponent (typeof (NetworkIdentity))]
+[RequireComponent (typeof (NetworkTransform))]
 
 public class DragDrop : NetworkBehaviour
 {
@@ -15,16 +17,19 @@ public class DragDrop : NetworkBehaviour
     private GameObject startParent;
     private Vector2 startPos;
 
-    private GameObject dropZone;
     private bool isOverDropZone;
 
     private bool isDragging = false;
+
+    private bool isDraggable = true;
+
+    private PlayerManager playerManager;
     #endregion
 
     private void Start()
     {
         mainCanvas = GameObject.Find("UI");
-        playerArea = GameObject.Find("PlayerArea");
+        playerArea = GameObject.Find("PlayerCardZone");
         startParent = GameObject.Find("PlayerHand");
     }
 
@@ -39,38 +44,48 @@ public class DragDrop : NetworkBehaviour
 
     public void StartDrag()
     {
+        if (!isDraggable)
+            return;
+
         isDragging = true;
-        //startParent = transform.parent.gameObject;
+        transform.SetParent(mainCanvas.transform, false);
+        startParent = transform.parent.gameObject;
         startPos = transform.position;
     }
 
     public void EndDrag()
     {
+        if (!isDraggable)
+            return;
+
         isDragging = false;
 
         if (isOverDropZone)
         {
-            transform.SetParent(dropZone.transform, false);
+            transform.SetParent(playerArea.transform, false);
+            isDraggable = false;
+            // 네트워크 연결
+            NetworkIdentity networkIdentity = NetworkClient.connection.identity;
+            playerManager = networkIdentity.GetComponent<PlayerManager>();
+            //playerManager.CmdDrawCard();
+            
         }
         else 
         {
             transform.position = startPos;
-            Debug.Log(startParent);
             transform.SetParent(startParent.transform, false);
         }
     }
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        Debug.Log("On");
         isOverDropZone = true;
-        dropZone = col.gameObject;
+        playerArea = col.gameObject;
     }
 
     private void OnCollisionExit2D(Collision2D col)
     {
-        Debug.Log("Off");
         isOverDropZone = false;
-        dropZone = null;
+        playerArea = null;
     }
 }

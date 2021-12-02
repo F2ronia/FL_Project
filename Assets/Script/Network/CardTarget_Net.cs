@@ -1,53 +1,42 @@
-using Mirror;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 
-public class CardTarget_Net : NetworkBehaviour
+public class CardTarget_Net: MonoBehaviour
 {
-    #region Variables
-    public GameObject Card_1; //카드를 받을 오브젝트
-    public GameObject Card_2; //필드의 카드존을 받을 변수
+    public GameObject MouseDrag; //카드를 받을 오브젝트
+    public GameObject EndMouseDrag;//필드의 카드존을 받을 변수
     public GameObject CardHand; //Player의 패의 정보를 받을 변수
     public Canvas m_canvas;
-    private GraphicRaycaster m_gr;
+    public GraphicRaycaster m_gr;
 
     public PlayerDataInformation playerDataInformation; //플레이어 데이터 스크립터블
 
-    public GameObject battle;
+    public Battle battle;
 
-    public List<GameObject> defense;
-    public List<GameObject> attack;
     PointerEventData m_ped;
 
-    private PlayerManager playerManager;
+    public GameObject CardWarning; //경고(ex카드를 잘못된 곳에 둔 경우) 
 
-    private float delayTime = 0.5f;
+    public CardType PlayerCardType;
 
-    #endregion
+    public CardEffect cardEffect;
+
 
     void Update()
     {
-        if (playerDataInformation.PlayerTurn == true)
+        if (Input.GetMouseButtonUp(0) && MouseDrag != null)//마우스 클릭이 끝날떄
         {
-
-            if (Input.GetMouseButtonUp(0))//마우스 클릭이 끝날떄
-            {
-                RayCast();
-            }
-
-
-            if (Input.GetMouseButton(0) && Card_1 == null)
-            {
-                RayCast();
-
-            }
+            RayCast();
         }
-        this.transform.position = Input.mousePosition;
+        if (Input.GetMouseButton(0) && MouseDrag == null)
+        {
+            RayCast();
+        }
     }
+
 
     void Start()
     {
@@ -57,137 +46,141 @@ public class CardTarget_Net : NetworkBehaviour
 
     void RayCast()
     {
-        m_ped.position = Input.mousePosition;
         List<RaycastResult> results = new List<RaycastResult>();
+        m_ped.position = Input.mousePosition;
         m_gr.Raycast(m_ped, results);
-
-        if (results.Count != 0 && playerDataInformation.PlayerTurn == true)
+        if (results.Count != 0)
         {
-            if (playerDataInformation.PlayerBattle == true)
-            {
-                switch (results[0].gameObject.tag)
-                {//플레이어 베틀 페이즈 일때
-
-                    case "CardZone1":
-                        if (results[0].gameObject.GetComponent<Card>()._CardDataList[0].cardType == CardType.MonsterCard)
-                        {
-                            if (Card_1 == null)
-                            {
-                                Card_1 = results[0].gameObject;//Card에 읽어온 오브젝트를 넣는다
-                                CardWhetherenabled(0);
-                            }
-                        }
-                        break;
-
-                    case "CardZone2":
-                        if (results[0].gameObject.GetComponent<Card>()._CardDataList[0].cardType == CardType.MonsterCard)
-                        {
-                            Card_2 = results[0].gameObject; //레이캐스트로 가져온 오브젝트를 CardZone변수에 넣는다
-                            print("2");
-
-                            for (int i = 0; i < attack.Count; i++)
-                            {
-                                if (attack[i] == Card_1 && attack.Count < 0)
-                                {
-                                    defense.RemoveAt(i);
-                                    attack.RemoveAt(i);
-                                }
-                            }
-                            attack.Add(Card_1);
-                            defense.Add(Card_2);//배틀 스크립트에 공격 방어 오브젝트 추가
-                            CardWhetherenabled(2);
-
-                            battle.GetComponent<Battle>().Defense = defense; //배틀 스크립트에 공격 받는 카드의 리스트를 보낸다(데미지 계산에 활용)
-                            battle.GetComponent<Battle>().Attack = attack; //배틀 스크립트에 공격 하는 키드의 리스트를 보낸다(데미지 계산에 활용)
-                        }
-                        break;
-                }
-
-            }
-
-            else if (playerDataInformation.PlayerBattle == false)
-            //플레이어 배틀 페이지가 아닐때
-            {
-                switch (results[0].gameObject.tag)
-                {
-                    case "Card1":
-                        if (results[0].gameObject.GetComponent<Card>()._CardDataList[0].cardType == CardType.MonsterCard)
-                        {
-                            Card_1 = results[0].gameObject;
-                            CardWhetherenabled(0);
-                            Card_1.SetActive(false);
-                        }
-                        break;
-
-                    case "CardZone1":
-                        if (Card_1 != null)
-                        {
-                            Card_2 = results[0].gameObject;
-                            CardWhetherenabled(1);
-                        }
-                        break;
-                }
-            }
-
+            GameObject CardGameObjects = results[0].gameObject;
+            CardBattleTrue(CardGameObjects);
         }
-
-        else //래이캐스트를 쏘아서 받은 오브젝트가 없을 경우 
+        else if (MouseDrag != null)
         {
-            if (playerDataInformation.PlayerTurn == true) //Card 변수가 있을경우 
-            {
-
-                if (Card_1 != null)
-                {
-                    Card_1.SetActive(true); //패에 카드를 활성화 해준다
-                }
-
-                Card_2 = null;//CardZone을 비운다
-                Card_1 = null;//Card를 비운다
-                this.GetComponent<Image>().enabled = false;
-                print("카드존에 카드를 올려주세요");
-            }
+            MouseDrag.SetActive(true);
+            CardCancel();
         }
     }
 
-
-    void CardWhetherenabled(int Whetherenabled)
+    public void CardBattleTrue(GameObject CardGameObject)
     {
-        switch (Whetherenabled)
-        {
-            case 0:
-                GetComponent<Image>().enabled = true;
-                GetComponent<Card>()._CardDataList.Add(Card_1.GetComponent<Card>()._CardDataList[0]);//스크립트가 장착된 오브젝트에 Card의 카드정보를 넣는다
-                GetComponent<Image>().sprite = Card_1.GetComponent<Card>()._CardDataList[0].CardImage;//Card의 이미지를 가져와 장착된 오브젝트 이미지로 변경한다
-                break;
+        CardEffect cardEffect = CardGameObject.GetComponent<CardEffect>();
+        bool PlayerBattlePage = playerDataInformation.PlayerBattle;
 
-            case 1:
-                StartCoroutine(DelayDestory());
-                break;
-            case 2:
-                GetComponent<Image>().enabled = true;
-                GetComponent<Card>()._CardDataList.Add(Card_2.GetComponent<Card>()._CardDataList[0]);//스크립트가 장착된 오브젝트에 Card의 카드정보를 넣는다
-                GetComponent<Image>().sprite = Card_2.GetComponent<Card>()._CardDataList[0].CardImage;//Card의 이미지를 가져와 장착된 오브젝트 이미지로 변경한다
+        if (PlayerBattlePage == false && MouseDrag == null && playerDataInformation.PlayerStatsData[1] >= CardGameObject.GetComponent<Card>()._CardDataList[0].CardStatsData[2] || MouseDrag != null || PlayerBattlePage == true)
+        {//베틀중이 아니고, 클릭한 카드의 코스트가 본인의 코스트보다 낮을 경우 / 클릭한 카드가 있을경우(클릭한 카드가 있을 경우에 코스트를 확인하는 것을 방지하지 위해) / 배틀중일 경우(코스트를 확인하는 것을 방지하지 위해)
+            switch (CardGameObject.tag)
+            {
+                case "PlayerCardZone":
 
-                Card_1 = null;
-                Card_2 = null;
-                GetComponent<Image>().enabled = false;
-                break;
+                    if (PlayerBattlePage == false && MouseDrag != null)
+                    {
+                        //CardSummon(CardGameObject);
+                    }
+                    else
+                    {
+                        print("선택된 카드가 없습니다.");
+                    }
+                    break;
+                    
+                case "PlayerCard":
+                    if (PlayerBattlePage == false && MouseDrag == null && CardGameObject.transform.parent.tag == "PlayerCardHand" || PlayerBattlePage == true && MouseDrag == null && CardGameObject.transform.parent.tag == "PlayerCardZone")
+                    {//배틀중이 아니고 클릭한 오브젝트의 부모의 태그가 "PlayerCardHand" 또는 배틀 중이고 카드존에 있는 몬스터를 클릭한 경우(클릭한 오브젝트를 저장하기 위해)
+                        CardObjectSave(CardGameObject, PlayerBattlePage);
+                    }
+                    else if (PlayerBattlePage == false && MouseDrag != null && CardGameObject.transform.parent.tag == "EnemyCardZone" && MouseDrag.GetComponent<Card>()._CardDataList[0].cardType != CardType.MonsterCard)
+                    {//배틀중이 아니고 클릭한 오브젝트가 있고, 부모 오브젝트의 태그가 "EnemyCardZone"인 경우 또는 마법 카드인 경우(디버프 마법 발동을 위해)
+                        UseMagicCard(CardGameObject);
+                        print(CardGameObject.transform.parent.tag);
+                    }
+                    else if (PlayerBattlePage == false && MouseDrag != null && CardGameObject.transform.parent.tag == "PlayerCardZone" && MouseDrag.GetComponent<Card>()._CardDataList[0].cardType != CardType.MonsterCard)
+                    {//배틀중이 아니고 클릭한 부모 오브젝트의 태그가 "PlayerCardZone"이고 마법 카드인 경으(버프 마법 발동을 위해)
+                        UseMagicCard(CardGameObject);
+                    }
+                    else if (PlayerBattlePage == true && MouseDrag != null && CardGameObject.transform.parent.tag == "EnemyCardZone")
+                    {//배틀중이고 클릭한 오브젝트의 부모 오브젝트이 태그가 "EnemyCardZone"인 경우 (몬스터 공격)
+                        CardAttack(CardGameObject);
+                    }
+                    else
+                    {
+                        MouseDrag.SetActive(true);
+                        CardCancel();
+                    }
+                    break;
+                    
+                case "EnemyCardZone":
+                    if (PlayerBattlePage == false && MouseDrag != null && CardGameObject.GetComponent<Card>()._CardDataList[0].cardType != CardType.ResuscitationCard)
+                    {//배틀중이 아니고 소생 마법이 아닌경우 (에너미 컨트롤의 발동을 위하여)
+                        UseMagicCard(CardGameObject);
+                    }
+                    else
+                    {
+                        print("선택된 카드가 없습니다.");
+                    }
+                    break;
 
+                case "Enemy":
+                    if (PlayerBattlePage == true && MouseDrag != null)
+                    {//적 플레이어 직접 공격을 위하여
+                        battle.EnemyBattleDoubleCheck(MouseDrag.gameObject, CardGameObject);
+                        print("a");
+                        CardCancel();
+                    }
+                    break;
+                case "Cemetry":
+                    if (PlayerBattlePage == false && MouseDrag == null)
+                    {//소생 마법의 발동
+                        cardEffect.Resuscitation();
+                    }
+                    break;
+            }
         }
+
+
     }
 
-    private IEnumerator DelayDestory()
+    void CardCancel()
     {
-        Debug.Log("coroutine");
-        Debug.Log(Card_1);
-        Debug.Log(Card_2);
-        NetworkIdentity networkIdentity = NetworkClient.connection.identity;    // 현재 실행중인 클라이언트의 ID 값 받아오기
-        playerManager = networkIdentity.GetComponent<PlayerManager>();          // ID 값에 해당하는 PlayerManager 할당
-        playerManager.CmdDropCard(Card_1, Card_2.ToString().Substring(0,9));
-        GetComponent<Image>().enabled = false;
-        yield return new WaitForSeconds(delayTime);
-        Destroy(Card_1, 0f);
-        Card_1 = null;
-        Card_2 = null;
+        MouseDrag = null;
+        EndMouseDrag = null;
+    }
+
+    void CardObjectSave(GameObject CardGameObject, bool PlayerBattlePage) //클릭한 카드의 정보를 저장
+    {
+        MouseDrag = CardGameObject;
+        if (PlayerBattlePage == false)
+        {
+            MouseDrag.SetActive(false);
+        }
+    }
+    void UseMagicCard(GameObject CardGameObject)
+    {
+        EndMouseDrag = CardGameObject;
+        PlayerCardType = MouseDrag.GetComponent<Card>()._CardDataList[0].cardType;
+        if (MouseDrag != null && PlayerCardType != CardType.MonsterCard) //오류 방지용
+        {
+            cardEffect = EndMouseDrag.GetComponent<CardEffect>(); //효과를 적용할 카드를 지정
+            cardEffect.CardE(MouseDrag, EndMouseDrag); //효과 발동을 위해 마법카드와 발동할 대상의 인자를 보냄
+            CardCancel();
+        }
+    }
+    void CardSummon(GameObject CardGameObject) //소환
+    {
+        PlayerCardType = MouseDrag.GetComponent<Card>()._CardDataList[0].cardType;
+        if (MouseDrag != null && PlayerCardType == CardType.MonsterCard) //소환 카드가 없을 경우를 대비해서
+        {
+            EndMouseDrag = Instantiate(MouseDrag, CardGameObject.transform); //카드를 소환
+            EndMouseDrag.SetActive(true);//소한한 카드를 활성화
+            playerDataInformation.PlayerStatsData[1] -= MouseDrag.GetComponent<Card>()._CardDataList[0].CardStatsData[2]; //코스트 지불
+            CardCancel();
+        }
+    }
+    void CardAttack(GameObject CardGameObject) //공격 
+    {
+        EndMouseDrag = CardGameObject;
+        if (EndMouseDrag != null)
+        {
+            battle.BattleDoubleCheck(MouseDrag.gameObject, EndMouseDrag.gameObject); //공격하는 카드와 방어하는 카드의 정보를 보냄
+            CardCancel();
+        }
     }
 }

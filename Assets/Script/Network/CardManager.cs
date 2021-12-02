@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 
-public class CardManager : NetworkBehaviour
+public class CardManager : MonoBehaviour//NetworkBehaviour
 {
     #region Sigleton
     private static CardManager instance;
@@ -18,12 +18,39 @@ public class CardManager : NetworkBehaviour
         }
     }
     #endregion
+    public List<CardDataInformation> cardDataList;
 
-    [SyncVar]
+    public GameObject playerHand;
+
+    public GameObject cardPrefab;
+
+    private void Start()
+    {
+        for (int i = 0; i < 5; i++)
+            DrawCard();
+    }
+
+    public void DrawCard()
+    {
+        if (playerHand.transform.childCount < 8)
+        {
+            int random = Random.Range(0, cardDataList.Count);
+
+            GameObject spawnCard = Instantiate(cardPrefab, Vector2.zero, Quaternion.identity);
+            spawnCard.GetComponent<Card>()._CardDataList.Clear();
+            spawnCard.transform.GetChild(0).GetComponent<Image>().sprite = cardDataList[random].CardImage;
+            spawnCard.transform.SetParent(playerHand.transform, false);
+        }
+    }
+
+
+    
+    //[SyncVar]
     public int max_deck_cnt = 6;
 
     private PlayerManager playerManager;
 
+    
     public void CardDraw()
     {
         NetworkIdentity networkIdentity = NetworkClient.connection.identity;    // 현재 실행중인 클라이언트의 ID 값 받아오기
@@ -31,12 +58,12 @@ public class CardManager : NetworkBehaviour
         playerManager.CmdDrawCard();
     }
 
-    /*
+    
     public void CardDrop(GameObject card, string field)
     {
-
+        return;
     }
-    */
+    
 
     public void LoadDeck()
     {
