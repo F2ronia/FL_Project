@@ -21,10 +21,12 @@ public class Battle : MonoBehaviour
         Draw1();
         EnemyCradZoneList.Clear();
         GameObject PlayerCradZone = GameObject.Find("EnemyCardZone");
+        /*
         for(int i = 0; i < PlayerCradZone.transform.childCount; i++)
         {
             EnemyCradZoneList.Add(PlayerCradZone.transform.GetChild(i).gameObject);
         }
+        */
     }
 
     void Draw1()

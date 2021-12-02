@@ -86,12 +86,12 @@ GameObject:
   - component: {fileID: 6349200998491853263}
   - component: {fileID: 2542810646880401131}
   - component: {fileID: 5056811620116559383}
-  - component: {fileID: 6230287750823680620}
   - component: {fileID: 7071681868513214776}
   - component: {fileID: 4194284427340128710}
+  - component: {fileID: 6230287750823680620}
   - component: {fileID: 7415210653628110583}
-  - component: {fileID: 8413653651494907441}
   - component: {fileID: 422834776061123759}
+  - component: {fileID: 8413653651494907441}
   - component: {fileID: 7975833691126575919}
   - component: {fileID: 3312908006727233051}
   m_Layer: 5
@@ -167,39 +167,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6230287750823680620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2362509040567297607}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc583fad8cd5ffb408f54172e5e16247, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _CardDataList:
-  - CardName: 
-    CardStatsData: 140000000000000000000000000000000000000000000000
-    CardImage: {fileID: 0}
-    Hp: 0
-    cardDataInformation: {fileID: 11400000, guid: 0521649e7c32d844eae7498f2d87e076, type: 2}
-    cardType: 0
-  CardText:
-  - {fileID: 724240498393882255}
-  - {fileID: 4617128453586250639}
-  - {fileID: 1318992250025374529}
-  - {fileID: 6684879353213650427}
-  CardImage:
-  - {fileID: 5674807072028407220}
-  - {fileID: 7600585387496771191}
-  - {fileID: 2426721508856842252}
-  - {fileID: 1717698192870154725}
-  - {fileID: 6684306776299294413}
-  ObjectXSize: 0
-  ObjectNextSize: 0
-  Cemetry: {fileID: 0}
 --- !u!61 &7071681868513214776
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -247,6 +214,39 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &6230287750823680620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2362509040567297607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc583fad8cd5ffb408f54172e5e16247, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _CardDataList:
+  - CardName: 
+    CardStatsData: 1e0000000000000000000000000000000000000000000000
+    CardImage: {fileID: 0}
+    Hp: 0
+    cardDataInformation: {fileID: 11400000, guid: 62f2b558dcb636844ac9ac7dc8cb909c, type: 2}
+    cardType: 0
+  CardText:
+  - {fileID: 724240498393882255}
+  - {fileID: 4617128453586250639}
+  - {fileID: 1318992250025374529}
+  - {fileID: 6684879353213650427}
+  CardImage:
+  - {fileID: 5674807072028407220}
+  - {fileID: 7600585387496771191}
+  - {fileID: 2426721508856842252}
+  - {fileID: 1717698192870154725}
+  - {fileID: 6684306776299294413}
+  ObjectXSize: 0
+  ObjectNextSize: 0
+  Cemetry: {fileID: 0}
 --- !u!114 &7415210653628110583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,6 +262,20 @@ MonoBehaviour:
   PlayerCradZoneList: []
   playerDataInformation: {fileID: 11400000, guid: 08e011e2972d4c54eb3d92d37ef4499c, type: 2}
   Cemetry: {fileID: 0}
+--- !u!114 &422834776061123759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2362509040567297607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09f4984c26c80af44b0722ecff8d2280, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &8413653651494907441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307,18 +321,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
---- !u!114 &422834776061123759
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2362509040567297607}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09f4984c26c80af44b0722ecff8d2280, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7975833691126575919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,7 +352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  clientAuthority: 0
+  clientAuthority: 1
   sendInterval: 0.05
   syncPosition: 1
   syncRotation: 1

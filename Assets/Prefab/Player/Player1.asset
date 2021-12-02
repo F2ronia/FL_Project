@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerStatsData: e8030000bc020000
   PlayerTurn: 1
-  PlayerBattle: 0
+  PlayerBattle: 1
   playerCamp: 1
   PlayerImage: {fileID: 0}

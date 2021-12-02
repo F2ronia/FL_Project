@@ -19,15 +19,11 @@ public class PlayerManager : NetworkBehaviour
     // 필드 카드 데이터
     public GameObject playerArea;
     // 플레이어 카드 사용 공간
-    private GameObject playerDropZone;
-    // 플레이어 카드 소환 공간
     public GameObject playerCardHand;
     // 플레이어 손패 
 
     public GameObject enemyArea;
     // 상대 카드 사용 공간
-    private GameObject enemyDropZone;
-    // 상대 카드 소환 공간
     public GameObject enemyCardHand;
     // 상대 손패
 
@@ -92,7 +88,7 @@ public class PlayerManager : NetworkBehaviour
         enemyArea = GameObject.Find("EnemyArea");
         enemyCardHand = GameObject.Find("EnemyHand");
 
-        CardManager.Instance.LoadDeck();
+        //CardManager.Instance.LoadDeck();
     }
 
     [Command]
@@ -104,6 +100,11 @@ public class PlayerManager : NetworkBehaviour
         Debug.Log("카드매니저 변수 : " + CardManager.Instance.max_deck_cnt);
     }
 
+    [Command]
+    public void CmdPlayCard(GameObject card)
+    {
+        RpcShowCard(card, "Played");
+    }
 
     [Command]
     public void CmdDrawCard() //플레이어의 턴마다 패에 카드를 추가
@@ -165,9 +166,22 @@ public class PlayerManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcShowCard(GameObject card, string field)
+    private void RpcShowCard(GameObject card, string type)
     {
         Debug.Log("RPC");
+
+        if (type == "Played")
+        {
+            if (hasAuthority)
+            {
+                card.transform.SetParent(playerArea.transform, false);
+            }
+            else
+            {
+                card.transform.SetParent(enemyArea.transform, false);
+            }
+        }
+        /*
         for (int i = 0; i < 3; i++)
         {
             if (playerArea.transform.GetChild(i).ToString().Substring(0, 9).Equals(field)
@@ -194,5 +208,6 @@ public class PlayerManager : NetworkBehaviour
             enemyDropZone.GetComponent<Card>()._CardDataList.Add(card.GetComponent<Card>()._CardDataList[0]);
             enemyDropZone.GetComponent<Image>().sprite = card.GetComponent<Card>()._CardDataList[0].CardImage;
         }
+        */
     }
 }

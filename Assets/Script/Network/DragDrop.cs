@@ -13,8 +13,8 @@ public class DragDrop : NetworkBehaviour
     #region Variables
     private GameObject mainCanvas;  // 메인 캔버스
     private GameObject playerArea;  // 플레이어 카드 사용 공간
+    private GameObject playerHand;  // 플레이어 손패
 
-    private GameObject startParent;
     private Vector2 startPos;
 
     private bool isOverDropZone;
@@ -30,7 +30,14 @@ public class DragDrop : NetworkBehaviour
     {
         mainCanvas = GameObject.Find("UI");
         playerArea = GameObject.Find("PlayerCardZone");
-        startParent = GameObject.Find("PlayerHand");
+        playerHand = GameObject.Find("PlayerHand");
+
+        /*
+        if (!hasAuthority)
+        {
+            isDraggable = false;
+        }
+        */
     }
 
     void Update()
@@ -49,7 +56,7 @@ public class DragDrop : NetworkBehaviour
 
         isDragging = true;
         transform.SetParent(mainCanvas.transform, false);
-        startParent = transform.parent.gameObject;
+        playerHand = transform.parent.gameObject;
         startPos = transform.position;
     }
 
@@ -67,13 +74,12 @@ public class DragDrop : NetworkBehaviour
             // 네트워크 연결
             NetworkIdentity networkIdentity = NetworkClient.connection.identity;
             playerManager = networkIdentity.GetComponent<PlayerManager>();
-            //playerManager.CmdDrawCard();
-            
+            playerManager.CmdPlayCard(gameObject);
         }
         else 
         {
             transform.position = startPos;
-            transform.SetParent(startParent.transform, false);
+            transform.SetParent(playerHand.transform, false);
         }
     }
 
